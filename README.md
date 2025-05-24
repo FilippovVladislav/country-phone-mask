@@ -110,5 +110,6 @@ interface Country {
 
 - 💳 Карта РФ: **5536 9139 9548 1773**
 - ₿ Bitcoin: **18Ny4EDjZM2Y3xq6YoY9xmmjW8q3w9m6Eh**
+- Tether USD: **TUMKgoGgtAPgrd7ra82RyeqyAipD1Aj16w**
 
 Спасибо за вашу поддержку!

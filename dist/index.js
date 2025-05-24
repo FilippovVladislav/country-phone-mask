@@ -1,0 +1,566 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const countries = [
+    {
+        name: 'None Country',
+        code: 'NA',
+        dialCode: '',
+        mask: '',
+    },
+    {
+        name: 'Russia',
+        code: 'RU',
+        dialCode: '+7',
+        mask: '+7 (___) ___-__-__',
+    },
+    {
+        name: 'Kazakhstan',
+        code: 'KZ',
+        dialCode: '+7',
+        mask: '+7 (___) ___-__-__',
+    },
+    {
+        name: 'Belarus',
+        code: 'BY',
+        dialCode: '+375',
+        mask: '+375 (__) ___-__-__'
+    },
+    {
+        name: 'Uzbekistan',
+        code: 'UZ',
+        dialCode: '+998',
+        mask: '+998 (__) ___-__-__'
+    },
+    {
+        name: 'Tajikistan',
+        code: 'TJ',
+        dialCode: '+992',
+        mask: '+992 (__) ___-__-__'
+    },
+    {
+        name: 'Kyrgyzstan',
+        code: 'KG',
+        dialCode: '+996',
+        mask: '+996 (___) ___-___'
+    },
+    {
+        name: 'Armenia',
+        code: 'AM',
+        dialCode: '+374',
+        mask: '+374 (__) ___-___'
+    },
+    {
+        name: 'Azerbaijan',
+        code: 'AZ',
+        dialCode: '+994',
+        mask: '+994 (__) ___-__-__'
+    },
+    {
+        name: 'Moldova',
+        code: 'MD',
+        dialCode: '+373',
+        mask: '+373 (__) ___-___'
+    },
+    {
+        name: 'Turkmenistan',
+        code: 'TM',
+        dialCode: '+993',
+        mask: '+993 (__) ___-___'
+    },
+    { name: 'Albania', code: 'AL', dialCode: '+355', mask: '+355 (__) ___-___' },
+    { name: 'Andorra', code: 'AD', dialCode: '+376', mask: '+376 ___-___' },
+    { name: 'Austria', code: 'AT', dialCode: '+43', mask: '+43 (__) ___-____' },
+    { name: 'Belarus', code: 'BY', dialCode: '+375', mask: '+375 (__) ___-__-__' },
+    { name: 'Belgium', code: 'BE', dialCode: '+32', mask: '+32 (__) ___-__-__' },
+    { name: 'Bosnia and Herzegovina', code: 'BA', dialCode: '+387', mask: '+387 (__) ___-___' },
+    { name: 'Bulgaria', code: 'BG', dialCode: '+359', mask: '+359 (__) ___-___' },
+    { name: 'Croatia', code: 'HR', dialCode: '+385', mask: '+385 (__) ___-___' },
+    { name: 'Cyprus', code: 'CY', dialCode: '+357', mask: '+357 __-___-___' },
+    { name: 'Czech Republic', code: 'CZ', dialCode: '+420', mask: '+420 ___-___-___' },
+    { name: 'Denmark', code: 'DK', dialCode: '+45', mask: '+45 __ __ __ __' },
+    { name: 'Estonia', code: 'EE', dialCode: '+372', mask: '+372 ___-____' },
+    { name: 'Finland', code: 'FI', dialCode: '+358', mask: '+358 __ ___ ____' },
+    { name: 'France', code: 'FR', dialCode: '+33', mask: '+33 _ __ __ __ __' },
+    { name: 'Germany', code: 'DE', dialCode: '+49', mask: '+49 (___) ___-____' },
+    { name: 'Greece', code: 'GR', dialCode: '+30', mask: '+30 ___ ___ ____' },
+    { name: 'Hungary', code: 'HU', dialCode: '+36', mask: '+36 (__) ___-___' },
+    { name: 'Iceland', code: 'IS', dialCode: '+354', mask: '+354 ___-____' },
+    { name: 'Ireland', code: 'IE', dialCode: '+353', mask: '+353 (__) ___-___' },
+    { name: 'Italy', code: 'IT', dialCode: '+39', mask: '+39 ___ ___ ____' },
+    { name: 'Latvia', code: 'LV', dialCode: '+371', mask: '+371 ___-____' },
+    { name: 'Liechtenstein', code: 'LI', dialCode: '+423', mask: '+423 ___-____' },
+    { name: 'Lithuania', code: 'LT', dialCode: '+370', mask: '+370 (__) ___-___' },
+    { name: 'Luxembourg', code: 'LU', dialCode: '+352', mask: '+352 ___-___-___' },
+    { name: 'Malta', code: 'MT', dialCode: '+356', mask: '+356 ___-____' },
+    { name: 'Moldova', code: 'MD', dialCode: '+373', mask: '+373 (__) ___-___' },
+    { name: 'Monaco', code: 'MC', dialCode: '+377', mask: '+377 ___-___-___' },
+    { name: 'Montenegro', code: 'ME', dialCode: '+382', mask: '+382 (__) ___-___' },
+    { name: 'Netherlands', code: 'NL', dialCode: '+31', mask: '+31 (__) ___-____' },
+    { name: 'North Macedonia', code: 'MK', dialCode: '+389', mask: '+389 (__) ___-___' },
+    { name: 'Norway', code: 'NO', dialCode: '+47', mask: '+47 ___ __ ___' },
+    { name: 'Poland', code: 'PL', dialCode: '+48', mask: '+48 ___-___-___' },
+    { name: 'Portugal', code: 'PT', dialCode: '+351', mask: '+351 ___-___-___' },
+    { name: 'Romania', code: 'RO', dialCode: '+40', mask: '+40 ___-___-___' },
+    { name: 'Russia', code: 'RU', dialCode: '+7', mask: '+7 (___) ___-__-__' },
+    { name: 'San Marino', code: 'SM', dialCode: '+378', mask: '+378 ___-___' },
+    { name: 'Serbia', code: 'RS', dialCode: '+381', mask: '+381 (__) ___-___' },
+    { name: 'Slovakia', code: 'SK', dialCode: '+421', mask: '+421 (__) ___-___' },
+    { name: 'Slovenia', code: 'SI', dialCode: '+386', mask: '+386 (__) ___-___' },
+    { name: 'Spain', code: 'ES', dialCode: '+34', mask: '+34 ___ ___ ___' },
+    { name: 'Sweden', code: 'SE', dialCode: '+46', mask: '+46 (__) ___-____' },
+    { name: 'Switzerland', code: 'CH', dialCode: '+41', mask: '+41 (__) ___-__-__' },
+    { name: 'Turkey', code: 'TR', dialCode: '+90', mask: '+90 (___) ___-____' },
+    { name: 'Ukraine', code: 'UA', dialCode: '+380', mask: '+380 (__) ___-__-__' },
+    { name: 'United Kingdom', code: 'GB', dialCode: '+44', mask: '+44 ____ ___ ___' },
+    { name: 'Vatican City', code: 'VA', dialCode: '+379', mask: '+379 ___-___' },
+    { name: 'Afghanistan', code: 'AF', dialCode: '+93', mask: '+93 (__) ___-___' },
+    { name: 'Bahrain', code: 'BH', dialCode: '+973', mask: '+973 ____ ____' },
+    { name: 'Bangladesh', code: 'BD', dialCode: '+880', mask: '+880 ____-______' },
+    { name: 'Bhutan', code: 'BT', dialCode: '+975', mask: '+975 __ ______' },
+    { name: 'Brunei', code: 'BN', dialCode: '+673', mask: '+673 ____ ____' },
+    { name: 'Cambodia', code: 'KH', dialCode: '+855', mask: '+855 (__) ___-___' },
+    { name: 'China', code: 'CN', dialCode: '+86', mask: '+86 ____ ____ ____' },
+    { name: 'Cyprus', code: 'CY', dialCode: '+357', mask: '+357 ___-____' },
+    { name: 'Georgia', code: 'GE', dialCode: '+995', mask: '+995 ___ ___ ___' },
+    { name: 'India', code: 'IN', dialCode: '+91', mask: '+91 _____-_____ ' },
+    { name: 'Indonesia', code: 'ID', dialCode: '+62', mask: '+62 ____-______' },
+    { name: 'Iran', code: 'IR', dialCode: '+98', mask: '+98 ___ ___ ____' },
+    { name: 'Iraq', code: 'IQ', dialCode: '+964', mask: '+964 ___ ___ ___' },
+    { name: 'Israel', code: 'IL', dialCode: '+972', mask: '+972 __-___-____' },
+    { name: 'Japan', code: 'JP', dialCode: '+81', mask: '+81 __-____-____' },
+    { name: 'Jordan', code: 'JO', dialCode: '+962', mask: '+962 ___ ___ ___' },
+    { name: 'Kuwait', code: 'KW', dialCode: '+965', mask: '+965 ____ ____' },
+    { name: 'Laos', code: 'LA', dialCode: '+856', mask: '+856 ___ ___ ___' },
+    { name: 'Lebanon', code: 'LB', dialCode: '+961', mask: '+961 __ ___ ___' },
+    { name: 'Malaysia', code: 'MY', dialCode: '+60', mask: '+60 __-___ ____' },
+    { name: 'Maldives', code: 'MV', dialCode: '+960', mask: '+960 ___ ___' },
+    { name: 'Mongolia', code: 'MN', dialCode: '+976', mask: '+976 ___ ___ ___' },
+    { name: 'Myanmar', code: 'MM', dialCode: '+95', mask: '+95 __-___-___' },
+    { name: 'Nepal', code: 'NP', dialCode: '+977', mask: '+977 ___-___-___' },
+    { name: 'North Korea', code: 'KP', dialCode: '+850', mask: '+850 __-___-___' },
+    { name: 'Oman', code: 'OM', dialCode: '+968', mask: '+968 ___ ___ ___' },
+    { name: 'Palestine', code: 'PS', dialCode: '+970', mask: '+970 ___ ___ ___' },
+    { name: 'Philippines', code: 'PH', dialCode: '+63', mask: '+63 ___ ___ ____' },
+    { name: 'Qatar', code: 'QA', dialCode: '+974', mask: '+974 ____ ____' },
+    { name: 'Saudi Arabia', code: 'SA', dialCode: '+966', mask: '+966 ___ ___ ___' },
+    { name: 'Singapore', code: 'SG', dialCode: '+65', mask: '+65 ____ ____' },
+    { name: 'South Korea', code: 'KR', dialCode: '+82', mask: '+82 __-___-____' },
+    { name: 'Sri Lanka', code: 'LK', dialCode: '+94', mask: '+94 __-___ ____' },
+    { name: 'Syria', code: 'SY', dialCode: '+963', mask: '+963 ___ ___ ___' },
+    { name: 'Taiwan', code: 'TW', dialCode: '+886', mask: '+886 __-___-____' },
+    { name: 'Thailand', code: 'TH', dialCode: '+66', mask: '+66 __ ___ ____' },
+    { name: 'Timor-Leste', code: 'TL', dialCode: '+670', mask: '+670 ___ ___ ___' },
+    { name: 'Turkey', code: 'TR', dialCode: '+90', mask: '+90 ___ ___ __ __' },
+    { name: 'United Arab Emirates', code: 'AE', dialCode: '+971', mask: '+971 ___ ___ ___' },
+    { name: 'Vietnam', code: 'VN', dialCode: '+84', mask: '+84 ___ ___ ____' },
+    { name: 'Yemen', code: 'YE', dialCode: '+967', mask: '+967 ___ ___ ___' },
+    { name: 'Algeria', code: 'DZ', dialCode: '+213', mask: '+213 ___ ___ ___' },
+    { name: 'Angola', code: 'AO', dialCode: '+244', mask: '+244 ___ ___ ___' },
+    { name: 'Benin', code: 'BJ', dialCode: '+229', mask: '+229 ____ ____' },
+    { name: 'Botswana', code: 'BW', dialCode: '+267', mask: '+267 ___ ____' },
+    { name: 'Burkina Faso', code: 'BF', dialCode: '+226', mask: '+226 __ __ __ __' },
+    { name: 'Burundi', code: 'BI', dialCode: '+257', mask: '+257 ___ ___ ___' },
+    { name: 'Cameroon', code: 'CM', dialCode: '+237', mask: '+237 ___ ___ ___' },
+    { name: 'Cape Verde', code: 'CV', dialCode: '+238', mask: '+238 ___ ___' },
+    { name: 'Central African Republic', code: 'CF', dialCode: '+236', mask: '+236 __ __ __ __' },
+    { name: 'Chad', code: 'TD', dialCode: '+235', mask: '+235 __ __ __ __' },
+    { name: 'Comoros', code: 'KM', dialCode: '+269', mask: '+269 __ __ __' },
+    { name: 'Congo (Brazzaville)', code: 'CG', dialCode: '+242', mask: '+242 ___ ___ ___' },
+    { name: 'Congo (Kinshasa)', code: 'CD', dialCode: '+243', mask: '+243 ___ ___ ___' },
+    { name: 'Djibouti', code: 'DJ', dialCode: '+253', mask: '+253 __ __ __ __' },
+    { name: 'Egypt', code: 'EG', dialCode: '+20', mask: '+20 __ ___ ___' },
+    { name: 'Equatorial Guinea', code: 'GQ', dialCode: '+240', mask: '+240 ___ ___ ___' },
+    { name: 'Eritrea', code: 'ER', dialCode: '+291', mask: '+291 __ __ __' },
+    { name: 'Eswatini', code: 'SZ', dialCode: '+268', mask: '+268 ___ ___ ___' },
+    { name: 'Ethiopia', code: 'ET', dialCode: '+251', mask: '+251 __ ___ ____' },
+    { name: 'Gabon', code: 'GA', dialCode: '+241', mask: '+241 ___ ___ ___' },
+    { name: 'Gambia', code: 'GM', dialCode: '+220', mask: '+220 ___ ___' },
+    { name: 'Ghana', code: 'GH', dialCode: '+233', mask: '+233 ___ ___ ___' },
+    { name: 'Guinea', code: 'GN', dialCode: '+224', mask: '+224 ___ ___ ___' },
+    { name: 'Guinea-Bissau', code: 'GW', dialCode: '+245', mask: '+245 ___ ___ ___' },
+    { name: 'Ivory Coast', code: 'CI', dialCode: '+225', mask: '+225 ___ ___ ___' },
+    { name: 'Kenya', code: 'KE', dialCode: '+254', mask: '+254 ___ ___ ___' },
+    { name: 'Lesotho', code: 'LS', dialCode: '+266', mask: '+266 ___ ___ ___' },
+    { name: 'Liberia', code: 'LR', dialCode: '+231', mask: '+231 ___ ___ ___' },
+    { name: 'Libya', code: 'LY', dialCode: '+218', mask: '+218 __ ___ ___' },
+    { name: 'Madagascar', code: 'MG', dialCode: '+261', mask: '+261 __ __ __ __' },
+    { name: 'Malawi', code: 'MW', dialCode: '+265', mask: '+265 __ ___ ___' },
+    { name: 'Mali', code: 'ML', dialCode: '+223', mask: '+223 ___ ___ ___' },
+    { name: 'Mauritania', code: 'MR', dialCode: '+222', mask: '+222 ___ ___ ___' },
+    { name: 'Mauritius', code: 'MU', dialCode: '+230', mask: '+230 ___ ___ ___' },
+    { name: 'Morocco', code: 'MA', dialCode: '+212', mask: '+212 ___ ___ ___' },
+    { name: 'Mozambique', code: 'MZ', dialCode: '+258', mask: '+258 ___ ___ ___' },
+    { name: 'Namibia', code: 'NA', dialCode: '+264', mask: '+264 __ ___ ___' },
+    { name: 'Niger', code: 'NE', dialCode: '+227', mask: '+227 ___ ___ ___' },
+    { name: 'Nigeria', code: 'NG', dialCode: '+234', mask: '+234 ___ ___ ___' },
+    { name: 'Rwanda', code: 'RW', dialCode: '+250', mask: '+250 ___ ___ ___' },
+    { name: 'Sao Tome and Principe', code: 'ST', dialCode: '+239', mask: '+239 ___ ___' },
+    { name: 'Senegal', code: 'SN', dialCode: '+221', mask: '+221 ___ ___ ___' },
+    { name: 'Seychelles', code: 'SC', dialCode: '+248', mask: '+248 ___ ___' },
+    { name: 'Sierra Leone', code: 'SL', dialCode: '+232', mask: '+232 ___ ___ ___' },
+    { name: 'Somalia', code: 'SO', dialCode: '+252', mask: '+252 ___ ___ ___' },
+    { name: 'South Africa', code: 'ZA', dialCode: '+27', mask: '+27 ___ ___ ___' },
+    { name: 'South Sudan', code: 'SS', dialCode: '+211', mask: '+211 ___ ___ ___' },
+    { name: 'Sudan', code: 'SD', dialCode: '+249', mask: '+249 ___ ___ ___' },
+    { name: 'Tanzania', code: 'TZ', dialCode: '+255', mask: '+255 ___ ___ ___' },
+    { name: 'Togo', code: 'TG', dialCode: '+228', mask: '+228 ___ ___ ___' },
+    { name: 'Tunisia', code: 'TN', dialCode: '+216', mask: '+216 ___ ___ ___' },
+    { name: 'Uganda', code: 'UG', dialCode: '+256', mask: '+256 ___ ___ ___' },
+    { name: 'Zambia', code: 'ZM', dialCode: '+260', mask: '+260 ___ ___ ___' },
+    { name: 'Zimbabwe', code: 'ZW', dialCode: '+263', mask: '+263 ___ ___ ___' },
+    { name: 'Antigua and Barbuda', code: 'AG', dialCode: '+1-268', mask: '+1-268 ___-____' },
+    { name: 'Bahamas', code: 'BS', dialCode: '+1-242', mask: '+1-242 ___-____' },
+    { name: 'Barbados', code: 'BB', dialCode: '+1-246', mask: '+1-246 ___-____' },
+    { name: 'Belize', code: 'BZ', dialCode: '+501', mask: '+501 ___-____' },
+    { name: 'Canada', code: 'CA', dialCode: '+1', mask: '+1 ___ ___ ____' },
+    { name: 'Costa Rica', code: 'CR', dialCode: '+506', mask: '+506 ___ ____' },
+    { name: 'Cuba', code: 'CU', dialCode: '+53', mask: '+53 ___ ____' },
+    { name: 'Dominica', code: 'DM', dialCode: '+1-767', mask: '+1-767 ___-____' },
+    { name: 'Dominican Republic', code: 'DO', dialCode: '+1-809', mask: '+1-809 ___-____' },
+    { name: 'El Salvador', code: 'SV', dialCode: '+503', mask: '+503 ____ ____' },
+    { name: 'Grenada', code: 'GD', dialCode: '+1-473', mask: '+1-473 ___-____' },
+    { name: 'Guatemala', code: 'GT', dialCode: '+502', mask: '+502 ____ ____' },
+    { name: 'Haiti', code: 'HT', dialCode: '+509', mask: '+509 ___ ____' },
+    { name: 'Honduras', code: 'HN', dialCode: '+504', mask: '+504 ____ ____' },
+    { name: 'Jamaica', code: 'JM', dialCode: '+1-876', mask: '+1-876 ___-____' },
+    { name: 'Mexico', code: 'MX', dialCode: '+52', mask: '+52 ___ ___ ____' },
+    { name: 'Nicaragua', code: 'NI', dialCode: '+505', mask: '+505 ____ ____' },
+    { name: 'Panama', code: 'PA', dialCode: '+507', mask: '+507 ___ ____' },
+    { name: 'Saint Kitts and Nevis', code: 'KN', dialCode: '+1-869', mask: '+1-869 ___-____' },
+    { name: 'Saint Lucia', code: 'LC', dialCode: '+1-758', mask: '+1-758 ___-____' },
+    { name: 'Saint Vincent and the Grenadines', code: 'VC', dialCode: '+1-784', mask: '+1-784 ___-____' },
+    { name: 'Trinidad and Tobago', code: 'TT', dialCode: '+1-868', mask: '+1-868 ___-____' },
+    { name: 'United States', code: 'US', dialCode: '+1', mask: '+1 ___ ___ ____' },
+    { name: 'Argentina', code: 'AR', dialCode: '+54', mask: '+54 __ ___-____' },
+    { name: 'Bolivia', code: 'BO', dialCode: '+591', mask: '+591 ___ ___ ___' },
+    { name: 'Brazil', code: 'BR', dialCode: '+55', mask: '+55 __ ____-____' },
+    { name: 'Chile', code: 'CL', dialCode: '+56', mask: '+56 _ ____ ____' },
+    { name: 'Colombia', code: 'CO', dialCode: '+57', mask: '+57 ___ ___ ____' },
+    { name: 'Ecuador', code: 'EC', dialCode: '+593', mask: '+593 __ ___ ____' },
+    { name: 'Guyana', code: 'GY', dialCode: '+592', mask: '+592 ___ ____' },
+    { name: 'Paraguay', code: 'PY', dialCode: '+595', mask: '+595 ___ ___ ___' },
+    { name: 'Peru', code: 'PE', dialCode: '+51', mask: '+51 __ ___ ____' },
+    { name: 'Suriname', code: 'SR', dialCode: '+597', mask: '+597 ___ ____' },
+    { name: 'Uruguay', code: 'UY', dialCode: '+598', mask: '+598 __ ___ ___' },
+    { name: 'Venezuela', code: 'VE', dialCode: '+58', mask: '+58 ___ ___ ____' },
+    { name: 'Australia', code: 'AU', dialCode: '+61', mask: '+61 _ ____ ____' },
+    { name: 'Fiji', code: 'FJ', dialCode: '+679', mask: '+679 ____ ____' },
+    { name: 'Kiribati', code: 'KI', dialCode: '+686', mask: '+686 ___ ____' },
+    { name: 'Marshall Islands', code: 'MH', dialCode: '+692', mask: '+692 ___ ____' },
+    { name: 'Micronesia', code: 'FM', dialCode: '+691', mask: '+691 ___ ____' },
+    { name: 'Nauru', code: 'NR', dialCode: '+674', mask: '+674 ___ ____' },
+    { name: 'New Zealand', code: 'NZ', dialCode: '+64', mask: '+64 __ ___ ____' },
+    { name: 'Palau', code: 'PW', dialCode: '+680', mask: '+680 ___ ____' },
+    { name: 'Papua New Guinea', code: 'PG', dialCode: '+675', mask: '+675 ___ ____' },
+    { name: 'Samoa', code: 'WS', dialCode: '+685', mask: '+685 __ ____' },
+    { name: 'Solomon Islands', code: 'SB', dialCode: '+677', mask: '+677 ___ ____' },
+    { name: 'Tonga', code: 'TO', dialCode: '+676', mask: '+676 ___ ____' },
+    { name: 'Tuvalu', code: 'TV', dialCode: '+688', mask: '+688 ___ ____' },
+    { name: 'Vanuatu', code: 'VU', dialCode: '+678', mask: '+678 ___ ____' }
+];
+
+function createPhoneInput({ container, countries, spritePath = './icons/sprite.svg', }) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'phone-input-wrapper';
+    const dropdown = document.createElement('div');
+    dropdown.className = 'country-dropdown';
+    const current = document.createElement('button');
+    current.className = 'current-country';
+    current.type = 'button';
+    const options = document.createElement('div');
+    options.className = 'country-options';
+    let currentCountry = countries.find(c => c.code === 'na') || countries[0];
+    let currentMask = currentCountry.mask;
+    let prefixValue = currentCountry.dialCode;
+    let maskEnabled = currentMask !== '';
+    function renderOptions() {
+        options.innerHTML = '';
+        countries.forEach(country => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'country-option';
+            if (country.code === currentCountry.code) {
+                option.classList.add('selected');
+            }
+            option.dataset.code = country.code;
+            option.dataset.mask = country.mask;
+            option.dataset.dialCode = country.dialCode;
+            option.innerHTML = `
+          <svg><use href="${spritePath}#${country.code}" /></svg>
+          <span>${country.name}</span>
+        `;
+            options.appendChild(option);
+        });
+    }
+    renderOptions();
+    function renderCurrentCountry() {
+        current.innerHTML = `
+          <svg><use href="${spritePath}#${currentCountry.code}" /></svg>
+          <span>${currentCountry.code}</span>
+        `;
+    }
+    renderCurrentCountry();
+    dropdown.appendChild(current);
+    dropdown.appendChild(options);
+    const input = document.createElement('input');
+    input.type = 'tel';
+    input.placeholder = currentMask;
+    input.value = maskEnabled ? currentMask : '';
+    wrapper.appendChild(dropdown);
+    wrapper.appendChild(input);
+    container.appendChild(wrapper);
+    let previousValue = input.value;
+    current.addEventListener('click', () => {
+        options.classList.toggle('visible');
+    });
+    options.addEventListener('click', (e) => {
+        const btn = e.target.closest('.country-option');
+        if (!btn)
+            return;
+        // Обновляем подсветку
+        options.querySelectorAll('.country-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+        const code = btn.dataset.code;
+        const mask = btn.dataset.mask;
+        const dialCode = btn.dataset.dialCode;
+        currentCountry = countries.find(c => c.code === code);
+        currentMask = mask;
+        prefixValue = dialCode;
+        maskEnabled = mask !== '';
+        input.placeholder = maskEnabled ? mask : '';
+        input.value = maskEnabled ? mask : '';
+        previousValue = input.value;
+        renderCurrentCountry();
+        options.classList.remove('visible');
+        if (maskEnabled) {
+            const pos = input.value.indexOf('_', prefixValue.length);
+            setCaretPosition(input, pos === -1 ? input.value.length : pos);
+        }
+    });
+    async function detectUserCountry() {
+        try {
+            // Запрашиваем код страны напрямую как plain text
+            const res = await fetch('https://ipapi.co/country/');
+            if (!res.ok)
+                throw new Error(`HTTP error! status: ${res.status}`);
+            // Читаем заголовки
+            const limit = res.headers.get('RateLimit-Limit');
+            const remaining = res.headers.get('RateLimit-Remaining');
+            const reset = res.headers.get('RateLimit-Reset');
+            if (remaining && parseInt(remaining) <= 0) {
+                console.warn('API free quota exhausted');
+                // Можно переключиться на fallback логику или показывать сообщение
+            }
+            const userCode = (await res.text()).toLowerCase();
+            const matched = countries.find((c) => c.code === userCode.toUpperCase());
+            if (matched) {
+                currentCountry = matched;
+                currentMask = matched.mask;
+                prefixValue = matched.dialCode;
+                maskEnabled = matched.mask !== '';
+            }
+            else {
+                const fallback = countries.find((c) => c.code === 'NA');
+                if (fallback) {
+                    currentCountry = fallback;
+                    currentMask = '';
+                    prefixValue = '';
+                    maskEnabled = false;
+                }
+            }
+            input.placeholder = currentMask;
+            input.value = maskEnabled ? currentMask : '';
+            previousValue = input.value;
+            renderCurrentCountry();
+            renderOptions();
+            if (maskEnabled) {
+                const pos = input.value.indexOf('_', prefixValue.length);
+                setCaretPosition(input, pos === -1 ? input.value.length : pos);
+            }
+        }
+        catch (err) {
+            console.error('Geo detection failed:', err);
+            const fallback = countries.find((c) => c.code === 'na');
+            if (fallback) {
+                currentCountry = fallback;
+                currentMask = '';
+                prefixValue = '';
+                maskEnabled = false;
+                input.placeholder = '';
+                input.value = '';
+                previousValue = '';
+                renderCurrentCountry();
+                renderOptions();
+            }
+        }
+    }
+    // Запускаем определение гео после инициализации базовых элементов
+    detectUserCountry();
+    function addCountries(newCountries) {
+        const existingCodes = new Set(countries.map(c => c.code));
+        newCountries.forEach(nc => {
+            if (!existingCodes.has(nc.code)) {
+                countries.push(nc);
+            }
+        });
+        renderOptions();
+    }
+    function setCaretPosition(elem, pos) {
+        if (elem.setSelectionRange) {
+            elem.focus();
+            elem.setSelectionRange(pos, pos);
+        }
+    }
+    function isMaskPlaceholder(char) {
+        return char === '_';
+    }
+    function insertDigitAt(value, pos, digit, mask) {
+        const valArr = value.split('');
+        let insertPos = pos;
+        while (insertPos < mask.length && !isMaskPlaceholder(mask[insertPos])) {
+            insertPos++;
+        }
+        if (insertPos >= mask.length)
+            return { newValue: value, newPos: pos };
+        valArr[insertPos] = digit;
+        let newPos = insertPos + 1;
+        while (newPos < mask.length && !isMaskPlaceholder(mask[newPos])) {
+            newPos++;
+        }
+        if (newPos > mask.length)
+            newPos = mask.length;
+        return { newValue: valArr.join(''), newPos };
+    }
+    function removeDigitSkipSeparators(value, pos, prefixLength, direction) {
+        const val = value.split('');
+        if (direction === 'backspace') {
+            if (pos <= prefixLength)
+                return { newValue: value, newPos: prefixLength };
+            let index = pos - 1;
+            while (index >= prefixLength && !/\d/.test(val[index])) {
+                index--;
+            }
+            if (index < prefixLength)
+                return { newValue: value, newPos: prefixLength };
+            val[index] = '_';
+            return { newValue: val.join(''), newPos: index };
+        }
+        else {
+            if (pos < prefixLength)
+                return { newValue: value, newPos: prefixLength };
+            let index = pos;
+            while (index < val.length && !/\d/.test(val[index])) {
+                index++;
+            }
+            if (index >= val.length)
+                return { newValue: value, newPos: val.length };
+            val[index] = '_';
+            return { newValue: val.join(''), newPos: index };
+        }
+    }
+    input.addEventListener('focus', () => {
+        if (!maskEnabled)
+            return;
+        if (input.value === '' || input.value === prefixValue + ' ') {
+            input.value = currentMask;
+            const firstInputPos = currentMask.indexOf('_', prefixValue.length);
+            setCaretPosition(input, firstInputPos === -1 ? currentMask.length : firstInputPos);
+            previousValue = input.value;
+        }
+    });
+    input.addEventListener('keydown', (e) => {
+        if (!maskEnabled)
+            return;
+        const pos = input.selectionStart || 0;
+        const key = e.key;
+        if (key === 'Backspace' || key === 'Delete') {
+            e.preventDefault();
+            const direction = key === 'Backspace' ? 'backspace' : 'delete';
+            const { newValue, newPos } = removeDigitSkipSeparators(input.value, pos, prefixValue.length, direction);
+            input.value = newValue;
+            setCaretPosition(input, newPos);
+            previousValue = newValue;
+        }
+    });
+    input.addEventListener('input', () => {
+        if (!maskEnabled) {
+            // Очищаем всё кроме цифр
+            input.value = input.value.replace(/\D/g, '');
+            return;
+        }
+        if (!input.value.startsWith(prefixValue)) {
+            const digits = input.value.replace(/\D/g, '');
+            input.value = prefixValue + ' ' + digits.slice(prefixValue.replace(/\D/g, '').length);
+            setCaretPosition(input, input.value.length);
+            previousValue = input.value;
+            return;
+        }
+        const pos = input.selectionStart || 0;
+        const lastChar = input.value[pos - 1];
+        if (!/\d/.test(lastChar)) {
+            input.value = previousValue;
+            setCaretPosition(input, pos - 1);
+            return;
+        }
+        const { newValue, newPos } = insertDigitAt(previousValue, pos - 1, lastChar, currentMask);
+        input.value = newValue;
+        setCaretPosition(input, newPos);
+        previousValue = newValue;
+    });
+    input.addEventListener('mousedown', (e) => {
+        if (!maskEnabled)
+            return;
+        if (input.value === currentMask) {
+            e.preventDefault();
+            const firstInputPos = currentMask.indexOf('_', prefixValue.length);
+            setTimeout(() => setCaretPosition(input, firstInputPos === -1 ? currentMask.length : firstInputPos), 0);
+        }
+    });
+    input.addEventListener('paste', (e) => {
+        var _a;
+        if (!maskEnabled)
+            return;
+        e.preventDefault();
+        const pastedData = ((_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text')) || '';
+        const digits = pastedData.replace(/\D/g, '');
+        let valArr = input.value.split('');
+        let mask = currentMask;
+        let insertPos = prefixValue.length;
+        // Вставляем цифры по маске, заменяя плейсхолдеры
+        for (let digit of digits) {
+            // Найти следующий плейсхолдер
+            while (insertPos < mask.length && mask[insertPos] !== '_') {
+                insertPos++;
+            }
+            if (insertPos >= mask.length)
+                break;
+            valArr[insertPos] = digit;
+            insertPos++;
+        }
+        const newValue = valArr.join('');
+        input.value = newValue;
+        // Устанавливаем курсор в следующую позицию для ввода
+        let caretPos = newValue.indexOf('_');
+        if (caretPos === -1)
+            caretPos = newValue.length;
+        setCaretPosition(input, caretPos);
+        previousValue = newValue;
+    });
+    // Закрытие выпадающего списка при клике вне
+    document.addEventListener('click', (event) => {
+        if (!dropdown.contains(event.target)) {
+            options.classList.remove('visible');
+        }
+    });
+    return {
+        addCountries,
+    };
+}
+
+exports.countries = countries;
+exports.default = createPhoneInput;
+//# sourceMappingURL=index.js.map

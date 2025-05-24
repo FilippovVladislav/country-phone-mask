@@ -1,0 +1,12 @@
+dev/
+node_modules/
+scripts/
+src/
+.npmignore
+package.json
+package-lock.json
+renameFlags.js
+rollup.config.js
+tsconfig.json
+vite.config.ts
+.idea

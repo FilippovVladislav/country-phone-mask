@@ -6,7 +6,7 @@ src/
 package.json
 package-lock.json
 renameFlags.js
-rollup.config.js
+rollup.config.mjs
 tsconfig.json
 vite.config.ts
 .idea

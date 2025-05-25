@@ -5,7 +5,7 @@
 
 ![Пример интерфейса](https://example.com/image.png)
 
-👉 [Открыть пример в CodeSandbox](animation.gif)
+👉 [Открыть пример в CodeSandbox](https://github.com/FilippovVladislav/country-phone-mask/blob/master/animation.gif)
 
 ## Установка
 

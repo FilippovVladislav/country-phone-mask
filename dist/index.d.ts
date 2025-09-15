@@ -10,7 +10,8 @@ export interface PhoneInputOptions {
     container: HTMLElement;
     countries: Country[];
     spritePath?: string;
+    apiKey?: string;
 }
-export default function createPhoneInput({ container, countries, spritePath, }: PhoneInputOptions): {
+export default function createPhoneInput({ container, countries, spritePath, apiKey, }: PhoneInputOptions): {
     addCountries: (newCountries: Country[]) => void;
 };

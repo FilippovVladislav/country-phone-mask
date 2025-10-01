@@ -28,12 +28,15 @@ yarn add country-phone-mask
 <script type="module">
     import createPhoneInput, { countries } from 'https://unpkg.com/country-phone-mask/dist/index.esm.js';
 
-    const container = document.getElementById('current-input');
+    const container = document.querySelectorAll(".phone-input");
 
-    createPhoneInput({
-        container,
-        countries: countries,
-        spritePath: '/icons/sprite.svg',
+    container.forEach((item) => {
+        createPhoneInput({
+            container: item,
+            countries: countries,
+            spritePath: "public/sprite.svg", // можно переопределить путь
+            apiKey: "", //https://ipinfo.io/
+        });
     });
 </script>
 ```
@@ -43,11 +46,48 @@ yarn add country-phone-mask
 ```ts
 import createPhoneInput, { countries } from 'country-phone-mask';
 
-const container = document.getElementById('current-input');
-createPhoneInput({
-  container,
-  countries,
-  spritePath: '/icons/sprite.svg',
+const container = document.querySelectorAll(".phone-input");
+
+container.forEach((item) => {
+    createPhoneInput({
+        container: item,
+        countries: countries,
+        spritePath: "public/sprite.svg", // можно переопределить путь
+        apiKey: "", //https://ipinfo.io/
+    });
+});
+```
+
+## Вы можете легко заменить на свои страны, просто замените массив `countries`.
+```ts
+import createPhoneInput, {
+  countries as defaultCountries,
+} from "country-phone-mask";
+
+const container = document.querySelectorAll(".phone-input");
+
+const myCountries = [
+  {
+    name: "None Country",
+    code: "NA",
+    dialCode: "",
+    mask: "",
+  },
+  {
+    name: "Russia",
+    code: "RU",
+    dialCode: "+7",
+    mask: "+7 (___) ___-__-__",
+  },
+    {name: "other"}
+ ]
+container.forEach((item) => {
+    createPhoneInput({
+        container: item,
+        countries: myCountries,
+        spritePath: "public/sprite.svg", // переопределить путь
+        apiKey: "", //https://ipinfo.io/
+    });
 });
 ```
 
@@ -62,42 +102,6 @@ interface Country {
 }
 ```
 
-## Вы можете легко заменить на свои страны, просто замените массив `countries`.
-```ts
-    const myCountries = [
-        {
-            name: 'None Country',
-            code: 'NA',
-            dialCode: '',
-            mask: '',
-        },
-        {
-            name: 'Russia',
-            code: 'RU',
-            dialCode: '+7',
-            mask: '+7 (___) ___-__-__',
-        },
-        {
-            name: 'Kazakhstan',
-            code: 'KZ',
-            dialCode: '+7',
-            mask: '+7 (___) ___-__-__',
-        },
-        {
-            name: 'Belarus',
-            code: 'BY',
-            dialCode: '+375',
-            mask: '+375 (__) ___-__-__'
-        },
-        {
-            name: 'Uzbekistan',
-            code: 'UZ',
-            dialCode: '+998',
-            mask: '+998 (__) ___-__-__'
-        }
-    ];
-```
-
 ## Особенности
 
 - 📱 Поддержка масок ввода по стране
@@ -105,6 +109,9 @@ interface Country {
 - 🔒 Защита префикса
 - 🧠 Умное позиционирование курсора
 - ✍️ Поддержка удаления и вставки номеров
+- Добавление уникального id
+- Добавление подсказки при фокусировке
+- Добавление уже вставленого номера
 
 ## 💖 Поддержать автора
 

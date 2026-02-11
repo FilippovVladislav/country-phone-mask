@@ -3,7 +3,6 @@ node_modules/
 scripts/
 src/
 .npmignore
-package.json
 package-lock.json
 renameFlags.js
 rollup.config.mjs

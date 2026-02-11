@@ -11,7 +11,8 @@ export interface PhoneInputOptions {
     countries: Country[];
     spritePath?: string;
     apiKey?: string;
+    defaultCountry?: string;
 }
-export default function createPhoneInput({ container, countries, spritePath, apiKey, }: PhoneInputOptions): {
+export default function createPhoneInput({ container, countries, spritePath, apiKey, defaultCountry, }: PhoneInputOptions): {
     addCountries: (newCountries: Country[]) => void;
 };

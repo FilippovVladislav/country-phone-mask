@@ -226,11 +226,7 @@ export default function createPhoneInput({
         }
     }
 
-    let lastKey: string | null = null;
-
     const handleKeydown = (e: KeyboardEvent) => {
-        lastKey = e.key;
-
         const prefixEnd = getPrefixEndPosition();
         if (!prefixEnd) return;
 
@@ -273,8 +269,43 @@ export default function createPhoneInput({
         }
     };
 
+    function getCaretPositionAfterEditableDigits(formatted: string, editableDigits: number) {
+        const prefixEnd = getPrefixEndPosition();
+        if (!currentMaskLocal) {
+            return Math.min(editableDigits, formatted.length);
+        }
+
+        if (editableDigits === 0) {
+            return prefixEnd;
+        }
+
+        let filledPositions = 0;
+        for (let i = 0; i < currentMaskLocal.length; i++) {
+            if (currentMaskLocal[i] !== "_" || !/\d/.test(formatted[i])) continue;
+
+            filledPositions++;
+            if (filledPositions !== editableDigits) continue;
+
+            let newPos = i + 1;
+            while (newPos < currentMaskLocal.length && currentMaskLocal[newPos] !== "_") {
+                newPos++;
+            }
+
+            return newPos;
+        }
+
+        // If a number is longer than the mask, its extra digits are appended after it.
+        return formatted.length;
+    }
+
     const handleInput = () => {
         const selectionStart = input.selectionStart || 0;
+        const prefixEnd = getPrefixEndPosition();
+        const digitsBeforeCaret = digitsOnly(input.value.slice(0, selectionStart)).length;
+        const prefixDigitsBeforeCaret = digitsOnly(
+            input.value.slice(0, Math.min(selectionStart, prefixEnd))
+        ).length;
+        const editableDigitsBeforeCaret = Math.max(0, digitsBeforeCaret - prefixDigitsBeforeCaret);
         let digits = digitsOnly(input.value);
 
         const prefDigits = digitsOnly(prefixLocal);
@@ -287,28 +318,42 @@ export default function createPhoneInput({
             : digits;
 
         input.value = formatted;
+        setCaretPosition(input, getCaretPositionAfterEditableDigits(formatted, editableDigitsBeforeCaret));
+    };
 
-        let newPos = selectionStart;
+    const handlePaste = (e: ClipboardEvent) => {
+        const pastedText = e.clipboardData?.getData('text');
+        if (pastedText === undefined) return;
 
-        if (lastKey === "Backspace") {
-            while (
-                newPos > 0 &&
-                formatted[newPos - 1] !== "_" &&
-                /\D/.test(formatted[newPos - 1])
-                ) {
-                newPos--;
-            }
-        } else {
-            while (
-                newPos < formatted.length &&
-                formatted[newPos] !== "_" &&
-                /\D/.test(formatted[newPos])
-                ) {
-                newPos++;
-            }
+        e.preventDefault();
+
+        let pastedDigits = digitsOnly(pastedText);
+        const prefixDigits = digitsOnly(prefixLocal);
+        const maskLength = (currentMaskLocal.match(/_/g) || []).length;
+        const hasInternationalPrefix = /^\s*\+/.test(pastedText);
+
+        // A plus sign unambiguously denotes an international number. A leading 8 is
+        // the Russian/Kazakh national trunk prefix and is only removed for a full number.
+        if (
+            prefixDigits &&
+            pastedDigits.startsWith(prefixDigits) &&
+            (hasInternationalPrefix || pastedDigits.length > maskLength)
+        ) {
+            pastedDigits = pastedDigits.slice(prefixDigits.length);
+        } else if (
+            prefixDigits === '7' &&
+            pastedDigits.startsWith('8') &&
+            pastedDigits.length > maskLength
+        ) {
+            pastedDigits = pastedDigits.slice(1);
         }
 
-        setCaretPosition(input, Math.max(newPos, getPrefixEndPosition()));
+        const formatted = currentMaskLocal
+            ? formatDigitsToMask(pastedDigits, currentMaskLocal)
+            : pastedDigits;
+
+        input.value = formatted;
+        setCaretPosition(input, getCaretPositionAfterEditableDigits(formatted, pastedDigits.length));
     };
 
     const keepCaretAfterPrefix = () => {
@@ -324,6 +369,7 @@ export default function createPhoneInput({
 
     input.addEventListener("keydown", handleKeydown);
     input.addEventListener("input", handleInput);
+    input.addEventListener("paste", handlePaste);
     input.addEventListener("click", keepCaretAfterPrefix);
     input.addEventListener("keyup", keepCaretAfterPrefix);
     input.addEventListener("focus", showClue);
@@ -425,6 +471,7 @@ export default function createPhoneInput({
     function destroy() {
         input.removeEventListener("keydown", handleKeydown);
         input.removeEventListener("input", handleInput);
+        input.removeEventListener("paste", handlePaste);
         input.removeEventListener("click", keepCaretAfterPrefix);
         input.removeEventListener("keyup", keepCaretAfterPrefix);
         input.removeEventListener("focus", showClue);

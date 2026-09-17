@@ -1,6 +1,6 @@
 {
   "name": "country-phone-mask",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Phone input with country selector and number masking (now using ipinfo.io for geo detection)",
   "keywords": [
     "phone",

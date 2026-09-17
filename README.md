@@ -1,25 +1,19 @@
 # country-phone-mask
 
-Легкий JavaScript/TypeScript-плагин для телефонного поля с выбором страны, маской номера, SVG-флагами и защитой кода страны.
+Лёгкий компонент для телефонного поля: выбор страны с флагами, маска номера и аккуратная работа с кареткой. Создаёт `input[type="tel"]` внутри указанного контейнера и не требует runtime-зависимостей.
 
-Плагин сам создает `input[type="tel"]` внутри указанного контейнера, форматирует ввод по маске выбранной страны и не дает каретке уйти в защищенную часть кода страны. Например для России каретка не уйдет левее первой позиции ввода в маске:
+![Демонстрация плагина](./animation.gif)
 
-```text
-+7 (___) ___-__-__
-    ^
-```
+## Что умеет
 
-## Возможности
-
-- Маска телефона для каждой страны.
-- Выпадающий список стран с флагами из SVG-спрайта.
-- Автоматическое определение страны по уже переданному номеру.
-- Опциональное определение страны через `ipinfo.io`.
-- Защита кода страны от удаления и случайного ввода перед ним.
-- Поддержка вставки номера из буфера.
-- Поддержка дополнительных стран через `addCountries`.
-- Метод `destroy` для удаления созданного поля и обработчиков.
-- ESM, CommonJS и TypeScript-типы.
+- Форматирует номер по маске выбранной страны.
+- Показывает страны и SVG-флаги в выпадающем списке.
+- Защищает код страны от случайного удаления.
+- Корректно обрабатывает ввод, удаление, вставку и положение каретки рядом со скобками, пробелами и дефисами.
+- Принимает номер из буфера в международном, российском национальном или локальном формате.
+- Определяет начальную страну по `defaultCountry`, начальному номеру или, при необходимости, через `ipinfo.io`.
+- Позволяет добавить страны и корректно удалить экземпляр.
+- Работает с ESM, CommonJS и TypeScript.
 
 ## Установка
 
@@ -33,85 +27,86 @@ yarn add country-phone-mask
 
 ## Быстрый старт
 
-Подключите CSS и инициализируйте плагин для каждого контейнера:
+```html
+<div class="phone-input"></div>
+```
 
 ```ts
 import createPhoneInput, { countries } from 'country-phone-mask';
 import 'country-phone-mask/dist/index.css';
 
-document.querySelectorAll<HTMLElement>('.phone-input').forEach((container) => {
-    createPhoneInput({
-        container,
-        countries,
-        spritePath: '/icons/sprite.svg',
-        defaultCountry: 'RU',
-    });
-});
-```
-
-HTML:
-
-```html
-<div class="phone-input"></div>
-```
-
-## CDN
-
-```html
-<link rel="stylesheet" href="https://unpkg.com/country-phone-mask/dist/index.css" />
-
-<div class="phone-input"></div>
-
-<script type="module">
-    import createPhoneInput, { countries } from 'https://unpkg.com/country-phone-mask/dist/index.esm.js';
-
-    document.querySelectorAll('.phone-input').forEach((container) => {
-        createPhoneInput({
-            container,
-            countries,
-            spritePath: 'https://unpkg.com/country-phone-mask/dist/icons/sprite.svg',
-            defaultCountry: 'RU',
-        });
-    });
-</script>
-```
-
-## CommonJS
-
-```js
-const phoneMask = require('country-phone-mask');
-
-phoneMask.default({
-    container: document.querySelector('.phone-input'),
-    countries: phoneMask.countries,
+const phone = createPhoneInput({
+    container: document.querySelector<HTMLElement>('.phone-input')!,
+    countries,
+    defaultCountry: 'RU',
     spritePath: '/icons/sprite.svg',
 });
 ```
 
-## HTML-атрибуты
+`container` должен существовать к моменту вызова. Один вызов создаёт один элемент поля; перед повторной инициализацией контейнера вызовите `phone.destroy()`.
 
-Плагин читает настройки из `data-*` атрибутов контейнера.
+### Использование через CDN
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/country-phone-mask/dist/index.css">
+
+<div class="phone-input"></div>
+
+<script type="module">
+  import createPhoneInput, { countries } from 'https://unpkg.com/country-phone-mask/dist/index.esm.js';
+
+  createPhoneInput({
+    container: document.querySelector('.phone-input'),
+    countries,
+    defaultCountry: 'RU',
+    spritePath: 'https://unpkg.com/country-phone-mask/dist/icons/sprite.svg',
+  });
+</script>
+```
+
+### CommonJS
+
+```js
+const phoneMask = require('country-phone-mask');
+
+const phone = phoneMask.default({
+    container: document.querySelector('.phone-input'),
+    countries: phoneMask.countries,
+    defaultCountry: 'RU',
+});
+```
+
+## Настройка поля через HTML
+
+Плагин считывает атрибуты `data-*` с контейнера.
 
 ```html
 <div
-    class="phone-input"
-    data-name="phone"
-    data-id="phone-field"
-    data-value="+79612035444"
-    data-clue="Введите номер телефона"
+  class="phone-input"
+  data-name="phone"
+  data-id="phone-field"
+  data-value="+79612035444"
+  data-clue="Введите номер телефона"
 ></div>
 ```
 
-| Атрибут | Описание |
+| Атрибут | Назначение |
 | --- | --- |
-| `data-name` | Значение для `name` созданного `input`. |
-| `data-id` | Значение для `id` созданного `input`. |
-| `data-value` | Начальное значение номера. Можно передавать полный номер с кодом страны. |
-| `data-clue` | Подсказка, которая появляется при фокусе на поле. |
+| `data-name` | Атрибут `name` созданного `input`, необходимый для отправки формы. |
+| `data-id` | Атрибут `id` созданного `input`. |
+| `data-value` | Начальный номер в любом привычном формате. |
+| `data-clue` | Текст подсказки над полем, отображаемой при фокусе. |
 
 ## Опции
 
 ```ts
+interface Country {
+    name: string;
+    code: string;
+    dialCode: string;
+    mask: string;
+}
+
 interface PhoneInputOptions {
     container: HTMLElement;
     countries: Country[];
@@ -121,58 +116,21 @@ interface PhoneInputOptions {
 }
 ```
 
-| Опция | Обязательная | Описание |
+| Опция | Обязательна | Описание |
 | --- | --- | --- |
-| `container` | Да | DOM-элемент, внутрь которого будет добавлен телефонный input. |
-| `countries` | Да | Массив стран и масок. Можно использовать встроенный `countries`. |
-| `spritePath` | Нет | Путь к SVG-спрайту с флагами. По умолчанию `./icons/sprite.svg`. |
-| `apiKey` | Нет | Токен ipinfo.io для автоопределения страны. |
-| `defaultCountry` | Нет | Код страны по умолчанию, например `RU`. Имеет приоритет над геолокацией. |
+| `container` | Да | Контейнер для интерфейса поля. |
+| `countries` | Да | Массив стран; можно импортировать встроенный `countries`. |
+| `spritePath` | Нет | Путь к SVG-спрайту. По умолчанию: `./icons/sprite.svg`. |
+| `apiKey` | Нет | Токен `ipinfo.io` для геоопределения страны. |
+| `defaultCountry` | Нет | Код начальной страны, например `RU`. Имеет приоритет над номером и геоопределением. |
 
-## Формат Country
+Для предсказуемого результата рекомендуется указывать `defaultCountry`.
 
-```ts
-interface Country {
-    name: string;
-    code: string;
-    dialCode: string;
-    mask: string;
-}
-```
+## Формат страны и свои страны
 
-Пример:
+`_` в маске — место для одной цифры. Остальные символы считаются форматированием.
 
 ```ts
-const ru = {
-    name: 'Russia',
-    code: 'RU',
-    dialCode: '+7',
-    mask: '+7 (___) ___-__-__',
-};
-```
-
-В маске символ `_` означает позицию, куда пользователь может вводить цифру. Все остальные символы считаются частью форматирования.
-
-## Пустая страна
-
-Во встроенном списке есть специальная страна без маски:
-
-```ts
-{
-    name: 'None Country',
-    code: 'NONE',
-    dialCode: '',
-    mask: '',
-}
-```
-
-Используйте `NONE`, если хотите дать пользователю вариант без кода страны и без маски.
-
-## Свой список стран
-
-```ts
-import createPhoneInput from 'country-phone-mask';
-
 const myCountries = [
     {
         name: 'None Country',
@@ -195,21 +153,30 @@ const myCountries = [
 ];
 
 createPhoneInput({
-    container: document.querySelector('.phone-input')!,
+    container: document.querySelector<HTMLElement>('.phone-input')!,
     countries: myCountries,
     defaultCountry: 'RU',
 });
 ```
 
-## API экземпляра
+Встроенная страна `NONE` создаёт поле без флага, кода и маски. Значения `code` должны быть уникальны. У России и Казахстана общий код `+7`; если важно выбрать одну из них до ввода, задайте `defaultCountry`.
 
-`createPhoneInput` возвращает объект с методами:
+## Вставка номера
+
+Ctrl+V заменяет номер в поле целиком и применяет маску выбранной страны. Для маски России или Казахстана следующие варианты равнозначны:
+
+| Содержимое буфера | Результат |
+| --- | --- |
+| `+79612035444` | `+7 (961) 203-54-44` |
+| `89612035444` | `+7 (961) 203-54-44` |
+| `9612035444` | `+7 (961) 203-54-44` |
+
+Международный код удаляется, если номер начинается с `+` и совпадает с кодом выбранной страны. Для `+7` также поддерживается российская/казахстанская национальная начальная `8` у полного номера.
+
+## Методы экземпляра
 
 ```ts
-const phone = createPhoneInput({
-    container,
-    countries,
-});
+const phone = createPhoneInput({ container, countries });
 
 phone.addCountries([
     {
@@ -225,10 +192,10 @@ phone.destroy();
 
 | Метод | Описание |
 | --- | --- |
-| `addCountries(newCountries)` | Добавляет новые страны без дублей по `code` и перерисовывает список. |
-| `destroy()` | Удаляет созданный DOM и снимает обработчики событий. |
+| `addCountries(newCountries)` | Добавляет страны без дубликатов по `code` и обновляет список. |
+| `destroy()` | Удаляет интерфейс, созданный плагином, и обработчики событий. |
 
-## Экспортируемые утилиты
+## Утилиты
 
 ```ts
 import {
@@ -238,23 +205,15 @@ import {
 } from 'country-phone-mask';
 ```
 
-| Утилита | Описание |
+| Функция | Описание |
 | --- | --- |
-| `digitsOnly(value)` | Возвращает только цифры из строки. |
-| `findCountryByDial(digits, countries)` | Находит страну по телефонному коду. |
-| `formatDigitsToMask(digits, mask)` | Форматирует цифры по маске и оставляет дополнительные цифры в конце. |
-
-## Поведение ввода
-
-- Код страны считается защищенной частью значения.
-- Каретка не уходит левее первой вводимой позиции маски.
-- Для `+7 (___) ___-__-__` минимальная позиция каретки находится на первом `_`.
-- Если цифр больше, чем позиций `_` в маске, лишние цифры добавляются в конец строки, а не отбрасываются.
-- При смене страны значение сбрасывается на маску выбранной страны.
+| `digitsOnly(value)` | Оставляет в строке только цифры. |
+| `findCountryByDial(digits, countries)` | Ищет страну по самому длинному совпадающему телефонному коду. |
+| `formatDigitsToMask(digits, mask)` | Подставляет цифры в маску; лишние цифры добавляет в конец. |
 
 ## Геоопределение
 
-Если `defaultCountry` не задан и нет `data-value`, плагин пробует определить страну через `https://ipinfo.io/country`.
+Если не задан `defaultCountry` и начальный номер не позволяет определить страну, плагин запрашивает `https://ipinfo.io/country`.
 
 ```ts
 createPhoneInput({
@@ -264,27 +223,27 @@ createPhoneInput({
 });
 ```
 
-Если запрос не пройдет или страна не найдется, поле останется на fallback-стране.
+При ошибке запроса остаётся первая fallback-страна: `NONE`, затем `NA`, затем первый элемент массива. Если сетевой запрос не нужен, укажите `defaultCountry`.
 
-## Флаги
+## Стили и флаги
 
-Флаги берутся из SVG-спрайта. Код страны используется как id символа:
+Импорт CSS обязателен для готового внешнего вида. SVG-флаг подключается как `${spritePath}#${code}`, поэтому в спрайте должен быть символ с id кода страны, например `RU`.
 
-```html
-<use href="/icons/sprite.svg#RU"></use>
-```
+Основные CSS-классы для переопределения дизайна:
 
-При сборке пакет кладет спрайт в:
+- `.phone-input-wrapper`
+- `.current-country`
+- `.country-options`
+- `.country-option`
+- `.phone-input-wrapper input[type="tel"]`
 
-```text
-dist/icons/sprite.svg
-```
+## Поведение и ограничения
 
-Для CDN можно использовать:
-
-```ts
-spritePath: 'https://unpkg.com/country-phone-mask/dist/icons/sprite.svg'
-```
+- Смена страны очищает введённый номер и показывает её маску.
+- Плагин форматирует ввод, но не валидирует номер и не сообщает о его полноте. Перед отправкой формы выполните нужную валидацию в приложении.
+- Незавершённая маска содержит `_`; если в форму должно уходить только число, очистите значение через `digitsOnly(input.value)` в обработчике формы.
+- Публичного API для получения/установки номера и событий смены страны сейчас нет.
+- Выпадающий список не закрывается по клику вне поля или по клавише Esc.
 
 ## Сборка из исходников
 
@@ -293,18 +252,8 @@ npm install
 npm run build
 ```
 
-Результат сборки:
+Результат публикуется в `dist/`: ESM, CommonJS, TypeScript-декларации, CSS и SVG-спрайт.
 
-```text
-dist/index.esm.js
-dist/index.cjs
-dist/index.d.ts
-dist/index.css
-dist/icons/sprite.svg
-```
+## Лицензия
 
-## Примечания
-
-- Для уникального выбора страны значения `code` должны быть уникальными.
-- Если несколько стран имеют один `dialCode`, например `RU` и `KZ` с `+7`, используйте `defaultCountry`, чтобы выбрать нужную страну по умолчанию.
-- `data-clue` вставляется как текст, HTML внутри подсказки не интерпретируется.
+ISC

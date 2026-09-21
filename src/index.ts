@@ -168,15 +168,33 @@ export default function createPhoneInput({
     if (nameAttr) input.name = nameAttr;
     if (idAttr) input.id = idAttr;
 
-    if (valueAttr) {
-        let digits = valueDigits;
+    function getEditableDigits(value: string, sourceText: string) {
+        let digits = value;
+        const prefixDigits = digitsOnly(prefixValue);
+        const maskLength = (currentMask.match(/_/g) || []).length;
+        const hasInternationalPrefix = /^\s*\+/.test(sourceText);
 
-        if (initial.source === "value") {
-            const pref = digitsOnly(prefixValue);
-            if (pref && digits.startsWith(pref)) {
-                digits = digits.slice(pref.length);
-            }
+        // A plus sign unambiguously denotes an international number. A leading 8 is
+        // the Russian/Kazakh national trunk prefix and is only removed for a full number.
+        if (
+            prefixDigits &&
+            digits.startsWith(prefixDigits) &&
+            (hasInternationalPrefix || digits.length > maskLength)
+        ) {
+            digits = digits.slice(prefixDigits.length);
+        } else if (
+            prefixDigits === '7' &&
+            digits.startsWith('8') &&
+            digits.length > maskLength
+        ) {
+            digits = digits.slice(1);
         }
+
+        return digits;
+    }
+
+    if (valueAttr) {
+        const digits = getEditableDigits(valueDigits, valueAttr);
 
         input.value = currentMask
             ? formatDigitsToMask(digits, currentMask)
@@ -349,26 +367,7 @@ export default function createPhoneInput({
 
         e.preventDefault();
 
-        let pastedDigits = digitsOnly(pastedText);
-        const prefixDigits = digitsOnly(prefixLocal);
-        const maskLength = (currentMaskLocal.match(/_/g) || []).length;
-        const hasInternationalPrefix = /^\s*\+/.test(pastedText);
-
-        // A plus sign unambiguously denotes an international number. A leading 8 is
-        // the Russian/Kazakh national trunk prefix and is only removed for a full number.
-        if (
-            prefixDigits &&
-            pastedDigits.startsWith(prefixDigits) &&
-            (hasInternationalPrefix || pastedDigits.length > maskLength)
-        ) {
-            pastedDigits = pastedDigits.slice(prefixDigits.length);
-        } else if (
-            prefixDigits === '7' &&
-            pastedDigits.startsWith('8') &&
-            pastedDigits.length > maskLength
-        ) {
-            pastedDigits = pastedDigits.slice(1);
-        }
+        const pastedDigits = getEditableDigits(digitsOnly(pastedText), pastedText);
 
         const formatted = currentMaskLocal
             ? formatDigitsToMask(pastedDigits, currentMaskLocal)

@@ -232,6 +232,28 @@ export default function createPhoneInput({
 
         const selectionStart = input.selectionStart ?? 0;
         const selectionEnd = input.selectionEnd ?? selectionStart;
+
+        // Keep the country code immutable while allowing the user to select and
+        // clear the entire entered number with Ctrl/Cmd+A then Delete/Backspace.
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+            e.preventDefault();
+            input.setSelectionRange(prefixEnd, input.value.length);
+            return;
+        }
+
+        const selectsEntireEditableNumber =
+            selectionStart === prefixEnd && selectionEnd === input.value.length;
+        if (
+            selectsEntireEditableNumber &&
+            (e.key === "Backspace" || e.key === "Delete")
+        ) {
+            e.preventDefault();
+            input.value = currentMaskLocal || "";
+            setCaretPosition(input, prefixEnd);
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            return;
+        }
+
         const isPrintableKey = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
 
         if (isPrintableKey && selectionStart < prefixEnd) {
@@ -359,7 +381,8 @@ export default function createPhoneInput({
     const keepCaretAfterPrefix = () => {
         const prefixEnd = getPrefixEndPosition();
         const selectionStart = input.selectionStart ?? 0;
-        if (prefixEnd && selectionStart < prefixEnd) {
+        const selectionEnd = input.selectionEnd ?? selectionStart;
+        if (prefixEnd && selectionStart < prefixEnd && selectionStart === selectionEnd) {
             setCaretPosition(input, prefixEnd, false);
         }
     };

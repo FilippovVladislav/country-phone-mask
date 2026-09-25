@@ -251,6 +251,46 @@ export default function createPhoneInput({
         const selectionStart = input.selectionStart ?? 0;
         const selectionEnd = input.selectionEnd ?? selectionStart;
 
+        // Separators are restored by the formatter. Without handling them here,
+        // Backspace at `00-|__` only removes `-` temporarily and appears to get
+        // stuck. Delete the preceding editable digit instead.
+        const isCollapsedBackspaceAtSeparator =
+            e.key === "Backspace" &&
+            selectionStart === selectionEnd &&
+            selectionStart > prefixEnd &&
+            currentMaskLocal &&
+            currentMaskLocal[selectionStart - 1] !== "_";
+
+        if (isCollapsedBackspaceAtSeparator) {
+            const editableDigitsBeforeCaret = digitsOnly(
+                input.value.slice(prefixEnd, selectionStart)
+            ).length;
+
+            if (editableDigitsBeforeCaret > 0) {
+                e.preventDefault();
+
+                const prefixDigits = digitsOnly(prefixLocal);
+                let editableDigits = digitsOnly(input.value);
+                if (prefixDigits && editableDigits.startsWith(prefixDigits)) {
+                    editableDigits = editableDigits.slice(prefixDigits.length);
+                }
+
+                const nextDigits =
+                    editableDigits.slice(0, editableDigitsBeforeCaret - 1) +
+                    editableDigits.slice(editableDigitsBeforeCaret);
+                input.value = formatDigitsToMask(nextDigits, currentMaskLocal);
+                setCaretPosition(
+                    input,
+                    getCaretPositionAfterEditableDigits(
+                        input.value,
+                        editableDigitsBeforeCaret - 1
+                    )
+                );
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                return;
+            }
+        }
+
         // Keep the country code immutable while allowing the user to select and
         // clear the entire entered number with Ctrl/Cmd+A then Delete/Backspace.
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
@@ -259,8 +299,11 @@ export default function createPhoneInput({
             return;
         }
 
+        // Normally Ctrl/Cmd+A is normalized above to start after the country
+        // code. Still accept a browser-native full selection (from position 0)
+        // so Backspace/Delete reliably clears the number as well.
         const selectsEntireEditableNumber =
-            selectionStart === prefixEnd && selectionEnd === input.value.length;
+            selectionStart <= prefixEnd && selectionEnd === input.value.length;
         if (
             selectsEntireEditableNumber &&
             (e.key === "Backspace" || e.key === "Delete")
